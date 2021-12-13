@@ -16,14 +16,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.w3c.dom.Text;
+public class SplashActivity extends AppCompatActivity {
 
-public class Signup extends AppCompatActivity {
     final String TAG = "firebaseAUTH";
 
     // Get the ui references
-    private EditText userEmail;
-    private Button btnSignup;
+    private EditText userEmail, userPassword;
+    private Button btnSignup, btnLogin;
     private String email;
 
     // References to firebase auth
@@ -32,12 +31,12 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_splash);
 
-        userEmail = findViewById(R.id.editTextAuthEmail);
+        userEmail = findViewById(R.id.editTextEmail);
+        userPassword = findViewById(R.id.editTextPassword);
         btnSignup = findViewById(R.id.buttonSignup);
-
-        email = userEmail.getText().toString().trim();
+        btnLogin = findViewById(R.id.buttonLogin);
 
         // Get the reference of the firebase
         // the get instance will get all the configurations on the google-service.json
@@ -46,31 +45,60 @@ public class Signup extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitForm();
+                signUp();
+            }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login();
             }
         });
 
     }
 
-    private void submitForm() {
+    private void login() {
+        String email = userEmail.getText().toString().trim();
+        String password = userPassword.getText().toString().trim();
+
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    Log.v(TAG,"Email verified? " + auth.getCurrentUser().isEmailVerified());
+                } else {
+                    // there was an error
+                    Log.v(TAG,"Error loging ");
+                }
+
+            }
+        });
+
+    }
+
+    private void signUp() {
+        String email = userEmail.getText().toString().trim();
+        String password = userPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(email)) {
             Log.v(TAG, "empty email");
             return;
         }
-        email = "thayscasado@gmail.com";
-        String password = "123456";
 
         // Create an account using Firebase auth
         auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(Signup.this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // If we reach here the auth was complete
                         if (task.isSuccessful()) {
                             // redirect user to main activity
                             Log.v(TAG, "User created");
-                            Intent intent = new Intent(Signup.this, MainActivity.class);
+                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
