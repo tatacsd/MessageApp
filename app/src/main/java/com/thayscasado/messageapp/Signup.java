@@ -58,7 +58,7 @@ public class Signup extends AppCompatActivity {
             Log.v(TAG, "empty email");
             return;
         }
-
+        email = "thayscasado@gmail.com";
         String password = "123456";
 
         // Create an account using Firebase auth
