@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailReceiver;
     private Button btnStartChat;
     private String emailSender;
-    private String chatID;
+    private String[] chatID = new String[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
         emailReceiver = findViewById(R.id.editTextReceiver);
         btnStartChat = findViewById(R.id.buttonStart);
 
-
         btnStartChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // remove @ from sender and receiver
                 String[] sender = emailSender.split("@");
                 String[] receiver = emailReceiver.getText().toString().trim().split("@");
-                chatID = sender[0] + receiver[0];
+                chatID[0] = sender[0] + receiver[0];
+                chatID[1] = receiver[0] + sender[0];
                 startChat();
             }
         });
@@ -60,25 +60,38 @@ public class MainActivity extends AppCompatActivity {
 
         // Write a message to the database
         mfirebaseIntance = FirebaseDatabase.getInstance();
-        mfirebaseDatabase = mfirebaseIntance.getReference("chats").child(chatID);
+        mfirebaseDatabase = mfirebaseIntance.getReference("chats");
         mfirebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean doesChatExist = false;
                 // check if the emailReceiver exist in users table
-                if(!snapshot.exists()){
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    if (child.getKey().equals(chatID[0]) || child.getKey().equals(chatID[1])) {
+                        Intent intent = new Intent(MainActivity.this, ChatboxActivity.class);
+                        intent.putExtra("chatID", chatID);
+                        startActivity(intent);
+                        finish();
+                        doesChatExist = true;
+                    }
+
+                }
+                if (!doesChatExist) {
                     // create one chatbox
                     // create a random key
                     String chatboxId = mfirebaseDatabase.push().getKey();
                     mfirebaseDatabase.child(chatboxId).setValue("");
+                    Intent intent = new Intent(MainActivity.this, ChatboxActivity.class);
+                    intent.putExtra("chatID", chatID);
+                    startActivity(intent);
+                    finish();
+
                 }
-                Intent intent = new Intent(MainActivity.this,ChatboxActivity.class);
-                intent.putExtra("chatID",chatID);
-                startActivity(intent);
-                finish();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 }
