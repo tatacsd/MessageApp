@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.database.DataSnapshot;
@@ -25,11 +26,14 @@ public class ChatboxActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseInstance;
     private String userName;
     private String Message;
+    private String[] chatID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatbox);
+
+        chatID = getIntent().getStringArrayExtra("chatID");
 
         // Reference to firebase database
         mFirebaseInstance = FirebaseDatabase.getInstance();
@@ -38,7 +42,15 @@ public class ChatboxActivity extends AppCompatActivity {
         mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //
+                // Checking database
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    if (child.getKey().equals(chatID[0]) || child.getKey().equals(chatID[1])) {
+                        // Get all messages and add them to the arrayList
+                        mFirebaseDatabase.child(child.getKey()).child("message");
+
+                    }
+
+                }
             }
 
             @Override
