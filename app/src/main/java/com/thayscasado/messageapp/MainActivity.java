@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 startChat();
             }
         });
-
     }
 
     private void startChat() {
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         // Write a message to the database
         mfirebaseIntance = FirebaseDatabase.getInstance();
         mfirebaseDatabase = mfirebaseIntance.getReference("chats");
-        mfirebaseDatabase.addValueEventListener(new ValueEventListener() {
+        mfirebaseDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean doesChatExist = false;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     // create one chatbox
                     // create a random key
                     String chatboxId = mfirebaseDatabase.push().getKey();
-                    mfirebaseDatabase.child(chatboxId).setValue("");
+                    mfirebaseDatabase.child(chatID[0]).setValue("");
                     Intent intent = new Intent(MainActivity.this, ChatboxActivity.class);
                     intent.putExtra("chatID", chatID);
                     startActivity(intent);
