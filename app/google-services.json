@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "448211894531",
+    "project_id": "messageapp-49def",
+    "storage_bucket": "messageapp-49def.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448211894531:android:577c72471ff0988feaa936",
+        "android_client_info": {
+          "package_name": "com.thayscasado.messageapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "448211894531-s85u2tmt9f5uke9sth1fohjmeqgu1c87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrKIM70vI4u7RS1o5-cB2kqANn1lC-s2k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "448211894531-s85u2tmt9f5uke9sth1fohjmeqgu1c87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
