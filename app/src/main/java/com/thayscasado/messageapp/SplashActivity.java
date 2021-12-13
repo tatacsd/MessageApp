@@ -15,6 +15,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -24,6 +29,9 @@ public class SplashActivity extends AppCompatActivity {
     private EditText userEmail, userPassword;
     private Button btnSignup, btnLogin;
     private String email;
+
+    FirebaseDatabase mfirebaseIntance;
+    DatabaseReference mfirebaseDatabase;
 
     // References to firebase auth
     private FirebaseAuth auth;
@@ -62,21 +70,22 @@ public class SplashActivity extends AppCompatActivity {
         String email = userEmail.getText().toString().trim();
         String password = userPassword.getText().toString().trim();
 
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SplashActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    Log.v(TAG,"Email verified? " + auth.getCurrentUser().isEmailVerified());
-                } else {
-                    // there was an error
-                    Log.v(TAG,"Error loging ");
-                }
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SplashActivity.this,
+                new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                            Log.v(TAG, "Email verified? " + auth.getCurrentUser().isEmailVerified());
+                        } else {
+                            // there was an error
+                            Log.v(TAG, "Error loging ");
+                        }
 
-            }
-        });
+                    }
+                });
 
     }
 
@@ -96,6 +105,23 @@ public class SplashActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // If we reach here the auth was complete
                         if (task.isSuccessful()) {
+                            // add to database table users
+                            mfirebaseIntance = FirebaseDatabase.getInstance();
+                            mfirebaseDatabase = mfirebaseIntance.getReference("users");
+                            mfirebaseDatabase.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    String[] userID = auth.getCurrentUser().getEmail().split("@");
+                                    // Create a user
+                                    mfirebaseDatabase.child(userID[0])
+                                            .setValue(auth.getCurrentUser().getEmail());
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                }
+                            });
+
                             // redirect user to main activity
                             Log.v(TAG, "User created");
                             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
