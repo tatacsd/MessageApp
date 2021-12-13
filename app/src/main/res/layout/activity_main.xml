@@ -11,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/receiver_email"
         android:inputType="textPersonName"
-        android:text="Receiver email"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:text="Start conversation"
+        android:text="@string/start_conversation"
         app:layout_constraintStart_toStartOf="@+id/editTextReceiver"
         app:layout_constraintTop_toBottomOf="@+id/editTextReceiver" />
 </androidx.constraintlayout.widget.ConstraintLayout>

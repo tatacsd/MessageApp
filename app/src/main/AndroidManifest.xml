@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MessageApp">
         <activity
+            android:name=".ChatboxActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>

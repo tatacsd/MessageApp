@@ -3,11 +3,13 @@ package com.thayscasado.messageapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
                 String[] receiver = emailReceiver.getText().toString().trim().split("@");
                 chatID = sender[0] + receiver[0];
                 startChat();
-
             }
         });
 
@@ -64,23 +65,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // check if the emailReceiver exist in users table
-                if(snapshot.exists()){
-                    // open an intent with the chat
-
-                } else {
+                if(!snapshot.exists()){
                     // create one chatbox
                     // create a random key
                     String chatboxId = mfirebaseDatabase.push().getKey();
                     mfirebaseDatabase.child(chatboxId).setValue("");
                 }
-
-                //else display a toast msg saying that the user doesnt exist
+                Intent intent = new Intent(MainActivity.this,ChatboxActivity.class);
+                intent.putExtra("chatID",chatID);
+                startActivity(intent);
+                finish();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 }
