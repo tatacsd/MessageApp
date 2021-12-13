@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     // user auth to get the user sender email
     FirebaseAuth auth;
 
-    private EditText emailReceiver;
+    private EditText emailReceiver, message;
     private Button btnStartChat;
     private String emailSender;
     private String[] chatID = new String[2];
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         emailSender = auth.getCurrentUser().getEmail();
         emailReceiver = findViewById(R.id.editTextReceiver);
         btnStartChat = findViewById(R.id.buttonStart);
+        message = findViewById(R.id.etMessage);
 
         btnStartChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
                 // check if the emailReceiver exist in users table
                 for (DataSnapshot child : snapshot.getChildren()) {
                     if (child.getKey().equals(chatID[0]) || child.getKey().equals(chatID[1])) {
+                        String chatboxId = mfirebaseDatabase.push().getKey();
+                        String actualChatId = child.getKey();
+                        mfirebaseDatabase.child(actualChatId).child("message").child(chatboxId).child("Message").setValue(message.getText().toString());
+                        mfirebaseDatabase.child(actualChatId).child("message").child(chatboxId).child("Sender").setValue(emailSender);
                         Intent intent = new Intent(MainActivity.this, ChatboxActivity.class);
                         intent.putExtra("chatID", chatID);
                         startActivity(intent);
@@ -79,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     // create one chatbox
                     // create a random key
                     String chatboxId = mfirebaseDatabase.push().getKey();
-                    mfirebaseDatabase.child(chatID[0]).setValue("");
+                    mfirebaseDatabase.child(chatID[0]).child("message").child(chatboxId).child("Message").setValue(message.getText().toString());
+                    mfirebaseDatabase.child(chatID[0]).child("message").child(chatboxId).child("Sender").setValue(emailSender);
                     Intent intent = new Intent(MainActivity.this, ChatboxActivity.class);
                     intent.putExtra("chatID", chatID);
                     startActivity(intent);
